@@ -1,0 +1,25 @@
+body {
+}
+
+h1, h2, h3, li, #credits {
+    color: black;
+    -webkit-user-select: none; /* Safari */
+    -moz-user-select: none; /* Firefox */
+    -ms-user-select: none; /* IE10+/Edge */
+    user-select: none; /* Standard */
+}
+
+li {
+    font-size: 25px;
+    padding-top: 20px;
+}
+
+#canvas {
+    width: 100%;
+    max-width: 1000px;
+}
+
+.row-section {
+    display: none;
+}
+
