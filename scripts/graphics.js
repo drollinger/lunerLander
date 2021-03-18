@@ -3,8 +3,6 @@
  * A#: A01984170
  * Description: This contains the Graphics function
  *   needed to render any objects on the screen.
- *   The main sub-function MazeRenderer is used
- *   for all maze rendering.
  *************************************************/
 'use strict';
 
