@@ -7,6 +7,7 @@
     <link rel="stylesheet" type="text/css" href="styles/style.css"/>
     <script src='styles/bootstrap.bundle.min.js'></script>
     <script src='scripts/menuInput.js'></script>
+    <script src='scripts/terrain.js'></script>
     <script src='scripts/input.js'></script>
     <script src='scripts/graphics.js'></script>
     <script src='scripts/handlers.js'></script>
@@ -15,7 +16,9 @@
 <body onload="main()">
     <div class"container">
         <div id="canvasSection" class="row row-section">
-            <canvas id="canvas" width="1000" height="1000"></canvas>
+            <div id="canvasSection" class="row d-flex justify-content-center">
+                <canvas id="canvas" width="1000" height="1000"></canvas>
+            </div>
         </div>
         <div id="pauseMenuSection" class="row row-section">
             <div class="container">
