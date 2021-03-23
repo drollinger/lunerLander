@@ -7,28 +7,37 @@
 
 function main() {
     //Initialize
+    //TODO have the init in the declaration, it will be cleaner
     let input = Input();
     let keyInput = input.Keyboard();
 
-    let menuHandlers = MenuHandlers();
-    menuHandlers.InitMenuHandlers();
-    keyInput.RegisterCommand(['Escape'], menuHandlers.MenuEsc);
+    let menuing = Menuing();
+    menuing.InitMenuHandlers();
+    keyInput.RegisterCommand(['Escape'], menuing.MenuEsc);
 
     let terrain = Terrain();
     terrain.GenerateLine(terrain.Level.EASY);
+
+    let ship = Ship();
+    keyInput.RegisterCommand(['ArrowUp'], ship.BoostHandler);
+    keyInput.RegisterCommand(['ArrowLeft'], ship.RotateLeftHandler);
+    keyInput.RegisterCommand(['ArrowRight'], ship.RotateRightHandler);
 
     let graphics = Graphics();
     let terrainRenderer = graphics.TerrainRenderer({
         terrain : terrain,
     });
+    let shipRenderer = graphics.ShipRenderer({
+        ship : ship,
+    });
     graphics.InitRenderer({
         background : 'images/background.png',
         platform : 'images/platform.png',
         terrain : 'images/terrain.png',
+        ship : 'images/ship.png',
+        screen : 'images/screen.png',
     });
-
-
-
+    
     let highscores = [];
 
     let prevTime = performance.now();
@@ -47,12 +56,16 @@ function main() {
     };
     
     function update(elapsedTime) {
+        let gameInPlay = menuing.GetCurState()==menuing.States.GAME;
+        ship.Update(elapsedTime, gameInPlay, terrain);
     };
     
     function render() {
         graphics.Clear();
         graphics.RenderBackground();
         terrainRenderer.Render();
+        shipRenderer.RenderShip();
+        shipRenderer.RenderScore();
     };
     
     function processInput(elapsedTime) {

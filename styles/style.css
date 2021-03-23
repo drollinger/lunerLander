@@ -1,4 +1,15 @@
+@font-face {
+    font-family: 'SilkscreenRegular';
+    src: url("../fonts/slkscr.ttf");
+}
+
+@font-face {
+    font-family: 'CalculatorRegular';
+    src: url("../fonts/Calculator.ttf");
+}
+
 body {
+    background-image: url("../images/space.jpg");
 }
 
 h1, h2, h3, li, #credits {
@@ -23,3 +34,7 @@ li {
     display: none;
 }
 
+.img-side {
+    max-width: 100%;
+    height: auto;
+}

@@ -81,8 +81,7 @@ let Terrain = function() {
         );
     }
 
-    function normalRandom()
-    {
+    function normalRandom() {
         var val, u, v, s, mul;
         do {
             u = Math.random()*2-1;

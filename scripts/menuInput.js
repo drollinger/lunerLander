@@ -5,8 +5,8 @@
  *************************************************/
 'use strict';
 
-let MenuHandlers = function() {
-    let states = {
+let Menuing = function() {
+    let States = {
         GAME: 1,
         PAUSE: 2,
         MAIN: 3,
@@ -18,36 +18,53 @@ let MenuHandlers = function() {
     let InitMenuHandlers = function() {
         document.getElementById('resumeMenu').addEventListener('click', function() {
                 toggleMenu('canvasSection');
-                curState = states.GAME;
+                curState = States.GAME;
             }
         );
         document.getElementById('exitMenu').addEventListener('click', function() {
                 toggleMenu('mainMenuSection');
-                curState = states.MAIN;
+                curState = States.MAIN;
             }
         );
         document.getElementById('newGameMenu').addEventListener('click',  function() {
                 toggleMenu('canvasSection');
-                curState = states.GAME;
+                curState = States.GAME;
             }
         );
         document.getElementById('highscoresMenu').addEventListener('click', function() {
                 toggleMenu('highscoresSection');
-                curState = states.SUB;
+                curState = States.SUB;
             }
         );
         document.getElementById('customizeMenu').addEventListener('click', function() {
                 toggleMenu('customizeSection');
-                curState = states.SUB;
+                curState = States.SUB;
             }
         );
         document.getElementById('creditsMenu').addEventListener('click', function() {
                 toggleMenu('creditsSection');
-                curState = states.SUB;
+                curState = States.SUB;
             }
         );
         toggleMenu('mainMenuSection');
-        curState = states.MAIN;
+        curState = States.MAIN;
+    };
+
+    let MenuEsc = onPressOnly(function() {
+        switch (curState) {
+            case States.SUB:
+                toggleMenu('mainMenuSection');
+                curState = States.MAIN;
+                break;
+            case States.GAME:
+                toggleMenu('pauseMenuSection');
+                curState = States.PAUSE;
+                break;
+        };
+    });
+
+    let GetCurState = function() {
+        return curState;
     };
 
     function toggleMenu(id) {
@@ -56,19 +73,6 @@ let MenuHandlers = function() {
         });
         document.getElementById(id).style.display='initial';
     };
-
-    let MenuEsc = onPressOnly(function() {
-        switch (curState) {
-            case states.SUB:
-                toggleMenu('mainMenuSection');
-                curState = states.MAIN;
-                break;
-            case states.GAME:
-                toggleMenu('pauseMenuSection');
-                curState = states.PAUSE;
-                break;
-        };
-    });
 
     function onPressOnly(f) {
         return (function(key, elapsedTime) {
@@ -79,5 +83,7 @@ let MenuHandlers = function() {
     return {
         InitMenuHandlers : InitMenuHandlers,
         MenuEsc : MenuEsc,
+        States : States,
+        GetCurState : GetCurState,
     };
 };
