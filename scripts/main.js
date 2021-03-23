@@ -24,12 +24,18 @@ function main() {
     keyInput.RegisterCommand(['ArrowLeft'], ship.RotateLeftHandler);
     keyInput.RegisterCommand(['ArrowRight'], ship.RotateRightHandler);
 
+    let gamePlay = GamePlay(ship, terrain, menuing);
+    menuing.CreateNewGame(gamePlay);
+
     let graphics = Graphics();
     let terrainRenderer = graphics.TerrainRenderer({
         terrain : terrain,
     });
     let shipRenderer = graphics.ShipRenderer({
         ship : ship,
+    });
+    let gameRenderer = graphics.GameRenderer({
+        gamePlay : gamePlay,
     });
     graphics.InitRenderer({
         background : 'images/background.png',
@@ -38,9 +44,6 @@ function main() {
         ship : 'images/ship.png',
         screen : 'images/screen.png',
     });
-
-    let gamePlay = GamePlay(ship, terrain, menuing);
-    menuing.CreateNewGame(gamePlay);
 
     let prevTime = performance.now();
     requestAnimationFrame(gameLoop);
@@ -69,6 +72,7 @@ function main() {
         terrainRenderer.Render();
         shipRenderer.RenderShip();
         shipRenderer.RenderScore();
+        gameRenderer.RenderTransitions();
     };
     
     function processInput(elapsedTime) {

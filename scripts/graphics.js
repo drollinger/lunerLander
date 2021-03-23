@@ -184,11 +184,68 @@ let Graphics = function() {
         };
     }
 
+    let GameRenderer = function(spec) {
+        let gamePlay = spec.gamePlay;
+        let info = gamePlay.Info;
+
+        let RenderTransitions = function(terrain) {
+            if (info.onTransition && info.countDown < 5000) {
+                context.fillStyle = 'rgba(0,0,0,.3)';
+                context.fillRect(0, 0, canvas.width, canvas.height);
+                context.font = "30px Comic Sans MS";
+                if (info.shipOnPad) {
+                    if (info.done) {
+                        context.fillStyle = "rgba(107, 194, 107,1)";
+                        context.textAlign = "center";
+                        context.fillText("Congrats on the Landing!!", canvas.width/2, canvas.height/3-50);
+                        context.fillStyle = "rgba(252, 257, 252, 1)";
+                        context.fillText(`Total Score: ${info.score}`, canvas.width/2, canvas.height/3);
+                        context.fillText("Elon Musk is now Flying Back to Earth", canvas.width/2, canvas.height/3+50);
+                        context.fillText("Ejection to Menu in: ", canvas.width/2, canvas.height/3+130);
+                    }
+                    else {
+                        context.fillStyle = "rgba(107, 194, 107,1)";
+                        context.textAlign = "center";
+                        context.fillText("Congrats on the Landing!!", canvas.width/2, canvas.height/3-50);
+                        context.fillStyle = "rgba(252, 257, 252, 1)";
+                        context.fillText(`Current Score: ${info.score}`, canvas.width/2, canvas.height/3);
+                        context.fillText("There is More to Explore", canvas.width/2, canvas.height/3+50);
+                        context.fillText("Next Mission in: ", canvas.width/2, canvas.height/3+130);
+                    }
+
+                }
+                else {
+                    context.fillStyle = "rgba(252, 57, 3,1)";
+                    context.textAlign = "center";
+                    context.fillText("This was NOT a Simulation", canvas.width/2, canvas.height/3-50);
+                    context.fillText("Elon Musk is Dead", canvas.width/2, canvas.height/3);
+                    context.fillStyle = "rgba(252, 257, 252, 1)";
+                    context.fillText(`Total Score: ${info.score}`, canvas.width/2, canvas.height/3+50);
+                    context.fillText("Ejecting to Menu in: ", canvas.width/2, canvas.height/3+130);
+                }
+                if (info.countDown < 3000) {
+                    context.fillStyle = `rgba(252, 257, 252,${(info.countDown%1000)/1000})`;
+                    context.font = "100px Comic Sans MS";
+                    context.fillText(Math.floor(info.countDown/1000)+1, canvas.width/2, canvas.height/3+250);
+                }
+            }
+        };
+
+        let RenderScore = function() {
+        };
+
+        return {
+            RenderTransitions : RenderTransitions,
+            RenderScore : RenderScore,
+        };
+    }
+
     return {
         Clear : Clear,
         InitRenderer : InitRenderer,
         RenderBackground : RenderBackground,
         TerrainRenderer : TerrainRenderer,
         ShipRenderer : ShipRenderer,
+        GameRenderer : GameRenderer,
     }; 
 };
