@@ -2,7 +2,8 @@
  * Name: Dallin Drollinger
  * A#: A01984170
  * Description: The main function with 
- *  inizialization of values and the game loopC *************************************************/
+ *  inizialization of values and the game loopC 
+ **************************************************/
 'use strict';
 
 function main() {
@@ -37,8 +38,9 @@ function main() {
         ship : 'images/ship.png',
         screen : 'images/screen.png',
     });
-    
-    let highscores = [];
+
+    let gamePlay = GamePlay(ship, terrain, menuing);
+    menuing.CreateNewGame(gamePlay);
 
     let prevTime = performance.now();
     requestAnimationFrame(gameLoop);
@@ -58,6 +60,7 @@ function main() {
     function update(elapsedTime) {
         let gameInPlay = menuing.GetCurState()==menuing.States.GAME;
         ship.Update(elapsedTime, gameInPlay, terrain);
+        gamePlay.Update(elapsedTime, gameInPlay);
     };
     
     function render() {

@@ -67,6 +67,15 @@ let Menuing = function() {
         return curState;
     };
 
+    let GoToMainMenu = function() {
+        toggleMenu('mainMenuSection');
+        curState = States.MAIN;
+    };
+
+    let CreateNewGame = function(gamePlay) {
+        document.getElementById('newGameMenu').addEventListener('click', gamePlay.RestartGameHandler);
+    };
+
     function toggleMenu(id) {
         document.querySelectorAll('.row-section').forEach(item => {
             item.style.display='none';
@@ -85,5 +94,7 @@ let Menuing = function() {
         MenuEsc : MenuEsc,
         States : States,
         GetCurState : GetCurState,
+        GoToMainMenu : GoToMainMenu,
+        CreateNewGame : CreateNewGame,
     };
 };

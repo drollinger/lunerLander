@@ -20,7 +20,7 @@ let Ship = function() {
     let Stats = {
 
     };
-    let gravity = 60;
+    let gravity = 40;
     let thrust = gravity+30;
     let boost = coord(0, 0);
     let rotateRate = 2;
@@ -40,6 +40,17 @@ let Ship = function() {
             Info.crashed = shipHitLine(terrain.GetLineList());
         };
     };
+
+    let ResetShip = function() {
+        Info.center = coord(500, 50);
+        Info.width = 50;
+        Info.height = 80;
+        Info.rotation = -1*Math.PI/2;
+        Info.speed = coord(0, 0);
+        Info.unitSpeed = 0;
+        Info.fuel = 100;
+        Info.crashed = false;
+    }
 
     let BoostHandler = function(k, elapsedTime) {
         if (!Info.crashed) {
@@ -133,6 +144,7 @@ let Ship = function() {
     return {
         Info : Info,
         Update : Update,
+        ResetShip : ResetShip,
         BoostHandler : BoostHandler,
         RotateRightHandler : RotateRightHandler,
         RotateLeftHandler : RotateLeftHandler,

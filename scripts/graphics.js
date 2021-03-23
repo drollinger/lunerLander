@@ -66,6 +66,8 @@ let Graphics = function() {
         let lineList = terrain.GetLineList();
         let pads = terrain.GetPads();
         let Render = function() {
+            lineList = terrain.GetLineList();
+            pads = terrain.GetPads();
             if (imgTer.isReady) {
                 context.beginPath();
                 context.moveTo(0, canvas.height);
