@@ -11,8 +11,7 @@ let Ship = function() {
         center: coord(500, 50),
         width: 50,
         height: 80,
-        //rotation: -1*Math.PI/2,
-        rotation: 0,
+        rotation: -1*Math.PI/2,
         speed: coord(0, 0),
         unitSpeed: 0,
         fuel: 100,
@@ -27,7 +26,6 @@ let Ship = function() {
     let rotateRate = 2;
     let depletionRate = 5;
 
-    //TODO: Colision detection
     let Update = function(elapsedTime, gameInPlay, terrain) {
         if (gameInPlay && !Info.crashed) {
             if (Info.fuel <= 0) boost = coord(0, 0);
@@ -44,22 +42,27 @@ let Ship = function() {
     };
 
     let BoostHandler = function(k, elapsedTime) {
-        Info.fuel -= depletionRate*elapsedTime/1000;
-        if (Info.fuel < 0) Info.fuel = 0;
-        boost.x = Math.sin(Info.rotation)*thrust;
-        boost.y = Math.cos(Info.rotation)*thrust;
+        if (!Info.crashed) {
+            Info.fuel -= depletionRate*elapsedTime/1000;
+            if (Info.fuel < 0) Info.fuel = 0;
+            boost.x = Math.sin(Info.rotation)*thrust;
+            boost.y = Math.cos(Info.rotation)*thrust;
+        };
     };
 
     let RotateRightHandler = function(k, elapsedTime) {
-        Info.rotation += rotateRate*elapsedTime/1000;
+        if (!Info.crashed) {
+            Info.rotation += rotateRate*elapsedTime/1000;
+        };
     };
 
     let RotateLeftHandler = function(k, elapsedTime) {
-        Info.rotation -= rotateRate*elapsedTime/1000;
+        if (!Info.crashed) {
+            Info.rotation -= rotateRate*elapsedTime/1000;
+        };
     };
 
     function shipHitLine(line) {
-        let intersect = false;
         let courners = [];
         let cos = Math.cos(Info.rotation);
         let sin = Math.sin(Info.rotation);
@@ -67,22 +70,13 @@ let Ship = function() {
         let w = Info.width/2
         let h = Info.height/2
         let y = Info.center.y;
-        //TODO it is not always picking the right one!!!
-        let boxMin = coord(x - w*cos - h*sin, y + w*sin - h*cos);
-        let boxMax = coord(x + w*cos + h*sin, y - w*sin + h*cos);
-        //courners.push(coord(x - w*cos - h*sin, y + w*sin - h*cos)); //lowerLeft
-        //courners.push(coord(x - w*cos + h*sin, y + w*sin + h*cos)); //upperLeft
-        //courners.push(coord(x + w*cos + h*sin, y - w*sin + h*cos)); //upperRight
-        //courners.push(coord(x + w*cos - h*sin, y - w*sin - h*cos)); //lowerRight
-        let i = 0;
-        while (line[i].x < boxMin.x && i < line.length) i++;
-        i--;
-        if (i < 0) i = 0;
-        for (let j=0; j < courners)
-        while (line[i].x < boxMax.x && i+1 < line.length && !intersect) {
-            if (doIntersect(line[i].y, line[i+1].y, boxMin.y, boxMax.y)) intersect = true;
-            i++;
-        }
+        let intersect = false;
+        intersect = boxIntersect([
+            coord(x - w*cos - h*sin, y + w*sin - h*cos), //lowerLeft
+            coord(x - w*cos + h*sin, y + w*sin + h*cos), //upperLeft
+            coord(x + w*cos + h*sin, y - w*sin + h*cos), //upperRight
+            coord(x + w*cos - h*sin, y - w*sin - h*cos), //lowerRight
+        ], line);
         return intersect;
     };
 
@@ -91,27 +85,41 @@ let Ship = function() {
         for (let j=0; j < courners.length; j++) {
             let pt1 = courners[j];
             let pt2 = courners[(j+1)%courners.length];
-            let minX = Math.min(pt1.x, pt2.x);
-            let maxX = Math.max(pt1.x, pt2.x);
+            let left, right;
+            if (pt1.x < pt2.x) {
+                left = pt1;
+                right = pt2;
+            }
+            else {
+                left = pt2;
+                right = pt1;
+            }
+            let slope = (left.y-right.y)/(left.x-right.x);
             let i = 0;
-            while (line[i].x < minX && i < line.length) i++;
+            while (line[i].x < left.x && i < line.length) i++;
             i--;
             if (i < 0) i = 0;
-            while (line[i].x < maxX && i+1 < line.length && !intersect) {
-                if (doIntersect(line[i].y, line[i+1].y, boxMin.y, boxMax.y)) intersect = true;
+            while (line[i].x < right.x && i+1 < line.length && !intersect) {
+                if (doIntersect(line[i], line[i+1], left, right, slope)) intersect = true;
                 i++;
             }
         }
         return intersect;
     }
 
-    function doIntersect(lSta, lEnd, bMin, bMax) {
-        if (lSta < lEnd) {
-            if (lSta > bMax || lEnd < bMin) return false;
+    function doIntersect(l1, l2, b1, b2, bSlope) {
+        if (!isFinite(bSlope)) {
+            if (l1.x <= b1.x && l2.x >= b2.x && 
+                (l1.y <= Math.max(b1.y, b2.y) || l2.y <= Math.max(b1.y, b2.y))
+            ) return true;
+            else return false;
         }
-        else {
-            if (lEnd > bMax || lSta < bMin) return false;
-        }
+        //Will never be Infinity due to terrain generation style
+        let lSlope = (l1.y-l2.y)/(l1.x-l2.x);
+        let bc = b1.y - bSlope*b1.x;
+        let lc = l1.y - lSlope*l1.x;
+        let intersectX = (lc - bc)/(bSlope - lSlope);
+        if (intersectX < Math.max(b1.x, l1.x) || intersectX > Math.min(b2.x, l2.x)) return false;
         return true;
     };
 

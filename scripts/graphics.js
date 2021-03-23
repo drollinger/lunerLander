@@ -156,7 +156,9 @@ let Graphics = function() {
             );
            
             let deg = Math.round(info.rotation*180/Math.PI * 10) / 10;
-            screenText("rgba(252, 57, 3,1)", 
+            if (deg < -5 || deg > 5) color = "rgba(255, 250, 212,1)";
+            else color = "rgba(107, 194, 107,1)";
+            screenText(color, 
                 "Angle:", rs.x+rs.w/10, 35+rs.y+rs.h/2.625, 
                 deg.toFixed(1)+" °", rs.x+rs.w-ls.w/10, 35+rs.y+rs.h/2.625
             );
