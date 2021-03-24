@@ -3,6 +3,8 @@
  * A#: A01984170
  * Description: This contains the Graphics function
  *   needed to render any objects on the screen.
+ *   Note that the particle renderer is heavily
+ *   influenced by code written by Dr. Mathias
  *************************************************/
 'use strict';
 
@@ -33,6 +35,16 @@ let Graphics = function() {
     imgShip.onload = function() {
         this.isReady = true;
     };
+    let imgFire = new Image();
+    imgFire.isReady = false;
+    imgFire.onload = function() {
+        this.isReady = true;
+    };
+    let imgSmoke = new Image();
+    imgSmoke.isReady = false;
+    imgSmoke.onload = function() {
+        this.isReady = true;
+    };
 
     CanvasRenderingContext2D.prototype.clear = function() {
         this.save();
@@ -51,6 +63,8 @@ let Graphics = function() {
         imgTer.src = spec.terrain;
         imgShip.src = spec.ship;
         imgScreen.src = spec.screen;
+        imgFire.src = spec.fire;
+        imgSmoke.src = spec.smoke;
     }
     
     let RenderBackground = function() {
@@ -261,6 +275,46 @@ let Graphics = function() {
         };
     }
 
+    let ParticlesRenderer = function(spec) {
+        let fireParticles = spec.fireParticles;
+        let smokeParticles = spec.smokeParticles;
+
+        let Render = function() {
+            if (imgFire.isReady) {
+                Object.getOwnPropertyNames(fireParticles.Particles).forEach( function(value) {
+                    let particle = fireParticles.Particles[value];
+                    drawTexture(imgFire, particle.center, particle.rotation, particle.size);
+                });
+            }
+            if (imgSmoke.isReady) {
+                Object.getOwnPropertyNames(smokeParticles.Particles).forEach( function(value) {
+                    let particle = smokeParticles.Particles[value];
+                    drawTexture(imgSmoke, particle.center, particle.rotation, particle.size);
+                });
+            }
+        }
+
+        function drawTexture(image, center, rotation, size) {
+            context.save();
+
+            context.translate(center.x, center.y);
+            context.rotate(rotation);
+            context.translate(-center.x, -center.y);
+
+            context.drawImage(
+                image,
+                center.x - size.x / 2,
+                center.y - size.y / 2,
+                size.x, size.y);
+
+            context.restore();
+        }
+
+        return {
+            Render : Render,
+        };
+    };
+
     return {
         Clear : Clear,
         InitRenderer : InitRenderer,
@@ -269,5 +323,6 @@ let Graphics = function() {
         ShipRenderer : ShipRenderer,
         GameRenderer : GameRenderer,
         MenuRenderer : MenuRenderer,
+        ParticlesRenderer : ParticlesRenderer,
     }; 
 };

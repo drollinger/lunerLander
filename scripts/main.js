@@ -8,7 +8,6 @@
 
 function main() {
     //Initialize
-    //TODO have the init in the declaration, it will be cleaner
     let input = Input();
     let keyInput = input.Keyboard();
 
@@ -23,6 +22,17 @@ function main() {
     let gamePlay = GamePlay(ship, terrain, menuing);
     menuing.CreateNewGame(gamePlay);
 
+    let fireParticles = Particles({
+        size: { mean: 10, stdev: 4 },
+        speed: { mean: 50, stdev: 25 },
+        lifetime: { mean: 4, stdev: 1 }
+    });
+    let smokeParticles = Particles({
+        size: { mean: 10, stdev: 4 },
+        speed: { mean: 50, stdev: 25 },
+        lifetime: { mean: 4, stdev: 1 }
+    });
+
     let graphics = Graphics();
     let terrainRenderer = graphics.TerrainRenderer({
         terrain : terrain,
@@ -36,12 +46,18 @@ function main() {
     let menuRenderer = graphics.MenuRenderer({
         menuing : menuing,
     });
+    let particlesRenderer = graphics.ParticlesRenderer({
+        fireParticles : fireParticles,
+        smokeParticles : smokeParticles,
+    });
     graphics.InitRenderer({
         background : 'images/background.png',
         platform : 'images/platform.png',
         terrain : 'images/terrain.png',
         ship : 'images/ship.png',
         screen : 'images/screen.png',
+        fire : 'images/fire.png',
+        smoke : 'images/smoke.png',
     });
 
     let prevTime = performance.now();
@@ -64,6 +80,8 @@ function main() {
         ship.Update(elapsedTime, gameInPlay, terrain);
         gamePlay.Update(elapsedTime, gameInPlay);
         menuing.Update();
+        fireParticles.Update(elapsedTime, ship.Info);
+        smokeParticles.Update(elapsedTime, ship.Info);
     };
     
     function render() {
@@ -74,6 +92,7 @@ function main() {
         shipRenderer.RenderScore();
         gameRenderer.RenderTransitions();
         menuRenderer.RenderMenu();
+        particlesRenderer.Render();
     };
     
     function processInput(elapsedTime) {

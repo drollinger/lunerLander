@@ -16,6 +16,7 @@ let Ship = function() {
         unitSpeed: 0,
         fuel: 100,
         crashed: false,
+        isBoosting: false,
     };
     let Stats = {
 
@@ -29,6 +30,8 @@ let Ship = function() {
     let Update = function(elapsedTime, gameInPlay, terrain) {
         if (gameInPlay && !Info.crashed) {
             if (Info.fuel <= 0) boost = coord(0, 0);
+            if (boost.x == 0 && boost.y == 0) Info.isBoosting = false;
+            else Info.isBoosting = true;
             Info.speed.y += (gravity-boost.y)*elapsedTime/1000;
             Info.speed.x += boost.x*elapsedTime/1000;
             Info.unitSpeed = Math.sqrt(Info.speed.x**2 + Info.speed.y**2)/10;
