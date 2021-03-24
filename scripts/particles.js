@@ -4,6 +4,10 @@
 let Particles = function(spec) {
     let particleId = 1;
     let Particles = {};
+    let blowUp = false;
+    let size = { mean: spec.size.mean, stdev: spec.size.stdev };
+    let speed = { mean: spec.speed.mean, stdev: spec.size.stdev };
+    let lifetime = { mean: spec.lifetime.mean, stdev: spec.lifetime.stdev };
 
     let Update = function(elapsedTime, shipInfo) {
         let removeMe = [];
@@ -35,26 +39,64 @@ let Particles = function(spec) {
         }
         removeMe.length = 0;
 
-        let cos = Math.cos(shipInfo.rotation);
-        let sin = Math.sin(shipInfo.rotation);
-        let x = shipInfo.center.x;
-        let y = shipInfo.center.y;
-        let w = shipInfo.width/2
-        let h = shipInfo.height/2
-        let ll = {x: (x - w*cos - h*sin), y: (y + w*sin - h*cos)}; //lowerLeft
-        let lr = {x: (x + w*cos - h*sin), y: (y - w*sin - h*cos)}; //lowerRight
-        let shipBase = {x: (ll.x+lr.x)/2, y: (ll.y+lr.y)/2}
+        //let cos = Math.cos(shipInfo.rotation);
+        //let sin = Math.sin(shipInfo.rotation);
+        let cx = shipInfo.center.x;
+        let cy = shipInfo.center.y;
+        //let w = shipInfo.width/2
+        //let h = shipInfo.height/2
+        //let ll = {x: (x - w*cos - h*sin), y: (y + w*sin - h*cos)}; //lowerLeft
+        //let lr = {x: (x + w*cos - h*sin), y: (y - w*sin - h*cos)}; //lowerRight
+        //let shipBase = {x: (ll.x+lr.x)/2, y: (ll.y+lr.y)/2}
 
+        let r = shipInfo.height/2;
+        let rot = shipInfo.rotation + Math.PI/2;
+        let shipBase = {x: cx+(r*Math.cos(rot)), y: cy+(r*Math.sin(rot))}
+        if (blowUp) shipBase = shipInfo.center;
+        
         // Generate some new particles
-        if (shipInfo.isBoosting) {
-            for (let particle = 0; particle < 1; particle++) {
+        if (shipInfo.isBoosting || blowUp) {
+            for (let particle = 0; particle < 1+(blowUp*5); particle++) {
                 // Assign a unique name to each particle
-                Particles[particleId++] = create(shipBase);
+                if (blowUp) Particles[particleId++] = createCircle(shipBase);
+                else Particles[particleId++] = create(shipBase, rot);
             }
         }
     }
 
-    function create(shipBase) {
+    let BlowUpShip = function() {
+        blowUp = true;
+        size =  { mean: 50, stdev: 20 };
+        speed = { mean: 80, stdev: 50 };
+        lifetime = { mean: 2, stdev: 5};
+    };
+
+    let Reset = function() {
+        blowUp = false;
+        Object.getOwnPropertyNames(Particles).forEach(function(value, index, array) {
+            delete Particles[value];
+        });
+        size =  { mean: spec.size.mean, stdev: spec.size.stdev };
+        speed = { mean: spec.speed.mean, stdev: spec.size.stdev };
+        lifetime = { mean: spec.lifetime.mean, stdev: spec.lifetime.stdev };
+    };
+
+    function create(shipBase, rot) {
+        let size = nextGaussian(spec.size.mean, spec.size.stdev);
+        let p = {
+                center: { x: shipBase.x, y: shipBase.y },
+                size: { x: size, y: size},
+                direction: nextAngleVector(rot),
+                speed: nextGaussian(spec.speed.mean, spec.speed.stdev),
+                rotation: 0,
+                lifetime: nextGaussian(spec.lifetime.mean, spec.lifetime.stdev),
+                alive: 0
+            };
+
+        return p;
+    }
+
+    function createCircle(shipBase) {
         let size = nextGaussian(spec.size.mean, spec.size.stdev);
         let p = {
                 center: { x: shipBase.x, y: shipBase.y },
@@ -67,6 +109,15 @@ let Particles = function(spec) {
             };
 
         return p;
+    }
+
+
+    function nextAngleVector(rot) {
+        let angle = nextGaussian(rot, Math.PI/12);
+        return {
+            x: Math.cos(angle),
+            y: Math.sin(angle)
+        };
     }
 
     function nextCircleVector() {
@@ -109,5 +160,7 @@ let Particles = function(spec) {
     return {
         Update : Update,
         Particles : Particles,
+        BlowUpShip : BlowUpShip,
+        Reset : Reset,
     }; 
 };

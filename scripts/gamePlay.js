@@ -5,7 +5,7 @@
  *************************************************/
 'use strict';
 
-let GamePlay = function(s, t, m) {
+let GamePlay = function(s, t, m, ps) {
     //remember that these need to not be so hard coded
     let Info = {
         level: 1,
@@ -18,6 +18,7 @@ let GamePlay = function(s, t, m) {
     let ship = s;
     let terrain = t;
     let menu = m;
+    let particleSystems = ps;
     Info.level = terrain.Level.EASY;
     let pads;
 
@@ -40,6 +41,12 @@ let GamePlay = function(s, t, m) {
                 };
                 Info.shipOnPad = hasCond && onPad;
                 //TODO Adding in Scoring
+    
+                if (!Info.shipOnPad) {
+                    for (let p of particleSystems) {
+                        p.BlowUpShip();
+                    }
+                }
 
                 Info.onTransition = true;
                 Info.countDown = 6000;
@@ -62,6 +69,9 @@ let GamePlay = function(s, t, m) {
                     else menu.GoToMainMenu();
                     Info.shipOnPad = false;
                     Info.onTransition = false;
+                    for (let p of particleSystems) {
+                        p.Reset();
+                    }
                 };
             };
         };

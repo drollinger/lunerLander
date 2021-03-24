@@ -19,19 +19,22 @@ function main() {
     let menuing = Menuing(keyInput, ship);
     menuing.InitMenuHandlers();
 
-    let gamePlay = GamePlay(ship, terrain, menuing);
-    menuing.CreateNewGame(gamePlay);
-
     let fireParticles = Particles({
-        size: { mean: 10, stdev: 4 },
-        speed: { mean: 50, stdev: 25 },
-        lifetime: { mean: 4, stdev: 1 }
+        size: { mean: 8, stdev: 2 },
+        speed: { mean: 50, stdev: 10 },
+        lifetime: { mean: 0.5, stdev: 0.1 }
     });
     let smokeParticles = Particles({
         size: { mean: 10, stdev: 4 },
-        speed: { mean: 50, stdev: 25 },
-        lifetime: { mean: 4, stdev: 1 }
+        speed: { mean: 100, stdev: 25 },
+        lifetime: { mean: 1, stdev: 0.25 }
     });
+
+    let gamePlay = GamePlay(ship, terrain, menuing, 
+        [fireParticles, smokeParticles]
+    );
+    menuing.CreateNewGame(gamePlay);
+
 
     let graphics = Graphics();
     let terrainRenderer = graphics.TerrainRenderer({

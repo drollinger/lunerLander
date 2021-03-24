@@ -280,16 +280,16 @@ let Graphics = function() {
         let smokeParticles = spec.smokeParticles;
 
         let Render = function() {
-            if (imgFire.isReady) {
-                Object.getOwnPropertyNames(fireParticles.Particles).forEach( function(value) {
-                    let particle = fireParticles.Particles[value];
-                    drawTexture(imgFire, particle.center, particle.rotation, particle.size);
-                });
-            }
             if (imgSmoke.isReady) {
                 Object.getOwnPropertyNames(smokeParticles.Particles).forEach( function(value) {
                     let particle = smokeParticles.Particles[value];
                     drawTexture(imgSmoke, particle.center, particle.rotation, particle.size);
+                });
+            }
+            if (imgFire.isReady) {
+                Object.getOwnPropertyNames(fireParticles.Particles).forEach( function(value) {
+                    let particle = fireParticles.Particles[value];
+                    drawTexture(imgFire, particle.center, particle.rotation, particle.size);
                 });
             }
         }
