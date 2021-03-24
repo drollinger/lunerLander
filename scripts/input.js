@@ -18,6 +18,10 @@ let Input = function() {
             };
         };
 
+        let UnregisterKey = function(key) {
+            delete handlers[key];
+        };
+
         let Update = function(elapsedTime) {
             for (let key in keys) {
                 handlers[key]?.(keys[key], elapsedTime);
@@ -45,6 +49,7 @@ let Input = function() {
             keys : keys,
             RegisterCommand : RegisterCommand,
             Update : Update,
+            UnregisterKey : UnregisterKey,
         };
     }
 

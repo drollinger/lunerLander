@@ -12,17 +12,13 @@ function main() {
     let input = Input();
     let keyInput = input.Keyboard();
 
-    let menuing = Menuing();
-    menuing.InitMenuHandlers();
-    keyInput.RegisterCommand(['Escape'], menuing.MenuEsc);
-
     let terrain = Terrain();
     terrain.GenerateLine(terrain.Level.EASY);
 
     let ship = Ship();
-    keyInput.RegisterCommand(['ArrowUp'], ship.BoostHandler);
-    keyInput.RegisterCommand(['ArrowLeft'], ship.RotateLeftHandler);
-    keyInput.RegisterCommand(['ArrowRight'], ship.RotateRightHandler);
+
+    let menuing = Menuing(keyInput, ship);
+    menuing.InitMenuHandlers();
 
     let gamePlay = GamePlay(ship, terrain, menuing);
     menuing.CreateNewGame(gamePlay);
@@ -64,6 +60,7 @@ function main() {
         let gameInPlay = menuing.GetCurState()==menuing.States.GAME;
         ship.Update(elapsedTime, gameInPlay, terrain);
         gamePlay.Update(elapsedTime, gameInPlay);
+        menuing.Update();
     };
     
     function render() {
