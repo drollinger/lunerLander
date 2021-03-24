@@ -33,6 +33,9 @@ function main() {
     let gameRenderer = graphics.GameRenderer({
         gamePlay : gamePlay,
     });
+    let menuRenderer = graphics.MenuRenderer({
+        menuing : menuing,
+    });
     graphics.InitRenderer({
         background : 'images/background.png',
         platform : 'images/platform.png',
@@ -70,6 +73,7 @@ function main() {
         shipRenderer.RenderShip();
         shipRenderer.RenderScore();
         gameRenderer.RenderTransitions();
+        menuRenderer.RenderMenu();
     };
     
     function processInput(elapsedTime) {

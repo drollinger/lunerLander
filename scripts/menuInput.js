@@ -13,20 +13,23 @@ let Menuing = function(k, s) {
         SUB: 4,
     };
 
+    let Info = {
+        gettingNextKey: false,
+        buttons: {},
+    }
+
     let curState;
     let keyboard = k;
     let ship = s;
     let clickAssign = []
-    let gettingNextKey = false;
-    let buttons = {}
     let idToHandler = {
         boost : ship.BoostHandler,
         rotateLeft : ship.RotateLeftHandler,
         rotateRight : ship.RotateRightHandler,
     }
-    buttons['boost'] = localStorage.getItem('lunerGame.boost') ?? 'ArrowUp';
-    buttons['rotateLeft'] = localStorage.getItem('lunerGame.rotateLeft') ?? 'ArrowLeft';
-    buttons['rotateRight'] = localStorage.getItem('lunerGame.rotateRight') ?? 'ArrowRight';
+    Info.buttons['boost'] = localStorage.getItem('lunerGame.boost') ?? 'ArrowUp';
+    Info.buttons['rotateLeft'] = localStorage.getItem('lunerGame.rotateLeft') ?? 'ArrowLeft';
+    Info.buttons['rotateRight'] = localStorage.getItem('lunerGame.rotateRight') ?? 'ArrowRight';
 
     let InitMenuHandlers = function() {
         document.getElementById('resumeMenu').addEventListener('click', function() {
@@ -64,9 +67,9 @@ let Menuing = function(k, s) {
         document.getElementById('rotateRight').addEventListener('click', listenAndGet('rotateRight'));
 
         keyboard.RegisterCommand(['Escape'], MenuEsc);
-        keyboard.RegisterCommand([buttons['boost']], ship.BoostHandler);
-        keyboard.RegisterCommand([buttons['rotateLeft']], ship.RotateLeftHandler);
-        keyboard.RegisterCommand([buttons['rotateRight']], ship.RotateRightHandler);
+        keyboard.RegisterCommand([Info.buttons['boost']], ship.BoostHandler);
+        keyboard.RegisterCommand([Info.buttons['rotateLeft']], ship.RotateLeftHandler);
+        keyboard.RegisterCommand([Info.buttons['rotateRight']], ship.RotateRightHandler);
 
         toggleMenu('mainMenuSection');
         curState = States.MAIN;
@@ -99,7 +102,7 @@ let Menuing = function(k, s) {
     };
 
     let Update = function() {
-        if (gettingNextKey) {
+        if (Info.gettingNextKey) {
             for (let key in keyboard.keys) {
                 clickAssign(key);
                 break;
@@ -109,19 +112,15 @@ let Menuing = function(k, s) {
 
     function listenAndGet(id) {
         return (function () {
-            document.getElementById("msgText").innerHTML = 'Please Press New Button<br>Or Esc to Exit';
-            gettingNextKey = true;
+            Info.gettingNextKey = true;
             clickAssign = function(key) {
                 if (key != 'Escape') {
-                    keyboard.UnregisterKey(buttons[id]);
+                    keyboard.UnregisterKey(Info.buttons[id]);
                     keyboard.RegisterCommand([key], idToHandler[id]);
-                    buttons[id] = key;
+                    Info.buttons[id] = key;
                     localStorage[`lunerGame.${id}`] = key;
-                    if (key === ' ') key = 'Space';
-                    document.getElementById(id).innerHTML = key;
                 };
-                gettingNextKey = false;
-                document.getElementById("msgText").innerHTML = '';
+                Info.gettingNextKey = false;
             };
         });
     };
@@ -147,5 +146,6 @@ let Menuing = function(k, s) {
         GoToMainMenu : GoToMainMenu,
         CreateNewGame : CreateNewGame,
         Update : Update,
+        Info : Info,
     };
 };

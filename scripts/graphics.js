@@ -240,6 +240,27 @@ let Graphics = function() {
         };
     }
 
+    let MenuRenderer = function(spec) {
+        let menuing = spec.menuing;
+        let info = menuing.Info;
+
+        let RenderMenu = function() {
+            let msg;
+            if (info.gettingNextKey) msg = 'Please Press New Button<br>Or Esc to Exit';
+            else msg = '';
+            document.getElementById("msgText").innerHTML = msg;
+            for (let id of ['boost','rotateLeft','rotateRight']) {
+                let key = info.buttons[id];
+                if (key === ' ') key = 'Space';
+                document.getElementById(id).innerHTML = key;
+            }
+        };
+
+        return {
+            RenderMenu : RenderMenu,
+        };
+    }
+
     return {
         Clear : Clear,
         InitRenderer : InitRenderer,
@@ -247,5 +268,6 @@ let Graphics = function() {
         TerrainRenderer : TerrainRenderer,
         ShipRenderer : ShipRenderer,
         GameRenderer : GameRenderer,
+        MenuRenderer : MenuRenderer,
     }; 
 };
