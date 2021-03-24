@@ -43,14 +43,18 @@ let GamePlay = function(s, t, m, ps) {
                 //TODO Adding in Scoring
     
                 if (!Info.shipOnPad) {
+                    ShipSounds['audio/sound-1'].play();
                     for (let p of particleSystems) {
                         p.BlowUpShip();
                     }
                 }
-
+                else {
+                    ShipSounds['audio/sound-2'].play();
+                }
                 Info.onTransition = true;
                 Info.countDown = 6000;
                 if (Info.level == terrain.Level.HARD) Info.done = true;
+                ship.Info.isBoosting = false;
             };
             if (Info.onTransition) {
                 Info.countDown -= elapsedTime;
